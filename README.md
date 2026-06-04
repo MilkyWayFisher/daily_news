@@ -98,7 +98,7 @@ OPENAI_MODEL=gpt-4.1-mini
 
 ## 配置
 
-主要配置在 [config.yaml](config.yaml)，资产映射在 [config/asset_mapping.yaml](config/asset_mapping.yaml)。
+主要配置在 [config.example.yaml](config.example.yaml)，资产映射在 [config/asset_mapping.yaml](config/asset_mapping.yaml)。
 
 常用字段：
 
