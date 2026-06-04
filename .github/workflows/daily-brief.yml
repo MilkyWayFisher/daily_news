@@ -1,0 +1,86 @@
+name: Daily Investment Brief
+
+on:
+  workflow_dispatch:
+  schedule:
+    # GitHub cron uses UTC. These four UTC candidates cover 07:00 and 21:00
+    # America/Chicago during both daylight and standard time; a later step
+    # gates execution to the exact local hours.
+    - cron: "0 2,3,12,13 * * *"
+
+jobs:
+  run-brief:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
+      ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
+      ALPHAVANTAGE_KEY: ${{ secrets.ALPHAVANTAGE_KEY }}
+      FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+      FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+      OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'gpt-4.1-mini' }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      EMAIL_SMTP_HOST: ${{ secrets.EMAIL_SMTP_HOST }}
+      EMAIL_SMTP_PORT: ${{ secrets.EMAIL_SMTP_PORT }}
+      EMAIL_SMTP_USERNAME: ${{ secrets.EMAIL_SMTP_USERNAME }}
+      EMAIL_SMTP_PASSWORD: ${{ secrets.EMAIL_SMTP_PASSWORD }}
+      EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+      EMAIL_TO: ${{ secrets.EMAIL_TO }}
+      EMAIL_USE_TLS: ${{ vars.EMAIL_USE_TLS || 'true' }}
+      EMAIL_USE_SSL: ${{ vars.EMAIL_USE_SSL || 'false' }}
+
+    steps:
+      - name: Check local schedule
+        id: schedule_gate
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import os
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+
+          event_name = os.environ.get("GITHUB_EVENT_NAME", "")
+          now = datetime.now(ZoneInfo("America/Chicago"))
+          should_run = event_name != "schedule" or now.hour in {7, 21}
+          print(f"should_run={'true' if should_run else 'false'}")
+          print(f"local_time={now.strftime('%Y-%m-%d %H:%M:%S %Z')}")
+          PY
+
+      - name: Report skipped schedule
+        if: steps.schedule_gate.outputs.should_run != 'true'
+        run: echo "Skipping; local time is ${{ steps.schedule_gate.outputs.local_time }}, not 07:00 or 21:00 America/Chicago."
+
+      - name: Checkout
+        if: steps.schedule_gate.outputs.should_run == 'true'
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        if: steps.schedule_gate.outputs.should_run == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        if: steps.schedule_gate.outputs.should_run == 'true'
+        run: pip install -r requirements.txt
+
+      - name: Check email delivery
+        if: steps.schedule_gate.outputs.should_run == 'true'
+        run: |
+          CONFIG_PATH=config.yaml
+          if [ ! -f "$CONFIG_PATH" ]; then
+            CONFIG_PATH=config.example.yaml
+          fi
+          python -m briefing --config "$CONFIG_PATH" --check-delivery
+
+      - name: Run daily brief
+        if: steps.schedule_gate.outputs.should_run == 'true'
+        run: |
+          CONFIG_PATH=config.yaml
+          if [ ! -f "$CONFIG_PATH" ]; then
+            CONFIG_PATH=config.example.yaml
+          fi
+          python -m briefing --config "$CONFIG_PATH"

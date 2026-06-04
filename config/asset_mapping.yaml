@@ -1,0 +1,70 @@
+rates_up:
+  keywords:
+    - Treasury yields rise
+    - higher yields
+    - Fed hawkish
+    - rate hike
+  affected_assets:
+    QQQ: bearish
+    TLT: bearish
+    DXY: bullish
+    VOO: mixed
+  transmission_path: "利率上行可能压缩成长股估值，并推高美元与债券波动。"
+
+inflation:
+  keywords:
+    - inflation
+    - CPI
+    - PCE
+    - price pressures
+  affected_assets:
+    VOO: mixed
+    QQQ: bearish
+    TLT: bearish
+    GLD: mixed
+  transmission_path: "通胀数据会影响降息预期、美债收益率和风险资产估值。"
+
+oil_up:
+  keywords:
+    - oil prices rise
+    - Middle East
+    - OPEC
+    - shipping risk
+    - supply disruption
+  affected_assets:
+    XLE: bullish
+    USO: bullish
+    QQQ: bearish
+    VOO: mixed
+    GLD: mixed
+  transmission_path: "油价上行可能推高通胀预期，同时影响能源股、黄金和大盘风险偏好。"
+
+ai_semiconductors:
+  keywords:
+    - AI chips
+    - artificial intelligence
+    - Nvidia
+    - semiconductors
+    - export controls
+  affected_assets:
+    NVDA: mixed
+    AMD: mixed
+    QQQ: mixed
+    SMH: mixed
+    MSFT: mixed
+  transmission_path: "AI 与半导体事件通过资本开支、芯片供需和估值预期影响科技资产。"
+
+china_geopolitics:
+  keywords:
+    - China
+    - Taiwan
+    - tariff
+    - sanction
+    - export controls
+  affected_assets:
+    QQQ: mixed
+    NVDA: mixed
+    AAPL: mixed
+    TSLA: mixed
+    VOO: mixed
+  transmission_path: "中美与供应链风险可能通过出口限制、需求预期和风险偏好影响科技与大盘资产。"

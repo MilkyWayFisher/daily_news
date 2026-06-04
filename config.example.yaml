@@ -1,0 +1,104 @@
+user_profile:
+  investment_style: "long-term ETF investor"
+  risk_tolerance: "medium"
+  language: "zh-CN"
+
+watchlist:
+  tickers:
+    - VOO
+    - QQQ
+    - NVDA
+    - AAPL
+    - MSFT
+    - TSLA
+    - TLT
+    - GLD
+    - XLE
+
+topics:
+  macro:
+    - Federal Reserve
+    - inflation
+    - CPI
+    - PCE
+    - Treasury yields
+    - unemployment
+  geopolitics:
+    - US China
+    - Taiwan Strait
+    - Middle East
+    - Russia Ukraine
+    - sanctions
+    - tariffs
+    - oil supply
+  sectors:
+    - AI
+    - semiconductors
+    - cloud computing
+    - energy
+    - banking
+
+sources:
+  newsapi: true
+  gdelt: true
+  alphavantage_news: true
+  alphavantage_market: true
+  rss: true
+  fred_macro: true
+  max_articles_per_source: 30
+  lookback_hours: 24
+  news_lookback_hours: 24
+  rss_feeds:
+    - https://feeds.a.dj.com/rss/RSSMarketsMain.xml
+    - https://www.cnbc.com/id/100003114/device/rss/rss.html
+    - https://feeds.bbci.co.uk/news/business/rss.xml
+
+market:
+  market_lookback_days: 5
+  symbols:
+    - VOO
+    - SPY
+    - QQQ
+    - NVDA
+    - AAPL
+    - MSFT
+    - TSLA
+    - TLT
+    - GLD
+    - XLE
+    - USO
+    - VIX
+    - DXY
+    - WTI
+    - GOLD
+
+macro:
+  macro_lookback_months: 6
+  indicators:
+    - CPI
+    - Core CPI
+    - PCE
+    - Core PCE
+    - Unemployment Rate
+    - Nonfarm Payrolls
+    - Initial Jobless Claims
+    - Fed Funds Rate
+    - 10Y Treasury Yield
+    - 2Y Treasury Yield
+    - GDP
+    - Retail Sales
+
+delivery:
+  channel: "email"
+  send_time: "08:00"
+  timezone: "America/Chicago"
+  email:
+    subject_prefix: "每日投资情报简报"
+
+rules:
+  prohibit_direct_trade_instruction: true
+  include_sources: true
+  save_history: true
+  max_news_items: 8
+  min_score: 50
+  asset_mapping_path: "config/asset_mapping.yaml"
