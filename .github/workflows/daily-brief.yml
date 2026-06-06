@@ -6,7 +6,7 @@ on:
     # GitHub cron uses UTC. These four UTC candidates cover 07:00 and 21:00
     # America/Chicago during both daylight and standard time; a later step
     # gates execution to the exact local hours.
-    - cron: "0 2,3,12,13 * * *"
+    - cron: "0 13,23 * * *"
 
 jobs:
   run-brief:
@@ -49,26 +49,18 @@ jobs:
           print(f"local_time={now.strftime('%Y-%m-%d %H:%M:%S %Z')}")
           PY
 
-      - name: Report skipped schedule
-        if: steps.schedule_gate.outputs.should_run != 'true'
-        run: echo "Skipping; local time is ${{ steps.schedule_gate.outputs.local_time }}, not 07:00 or 21:00 America/Chicago."
-
       - name: Checkout
-        if: steps.schedule_gate.outputs.should_run == 'true'
         uses: actions/checkout@v4
 
       - name: Set up Python
-        if: steps.schedule_gate.outputs.should_run == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - name: Install dependencies
-        if: steps.schedule_gate.outputs.should_run == 'true'
         run: pip install -r requirements.txt
 
       - name: Check email delivery
-        if: steps.schedule_gate.outputs.should_run == 'true'
         run: |
           CONFIG_PATH=config.yaml
           if [ ! -f "$CONFIG_PATH" ]; then
@@ -77,7 +69,6 @@ jobs:
           python -m briefing --config "$CONFIG_PATH" --check-delivery
 
       - name: Run daily brief
-        if: steps.schedule_gate.outputs.should_run == 'true'
         run: |
           CONFIG_PATH=config.yaml
           if [ ! -f "$CONFIG_PATH" ]; then
